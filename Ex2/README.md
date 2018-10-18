@@ -2,7 +2,8 @@
 
 Learn target function f: SMS -> {ham, spam}
 
-SMS Spam Collection Dataset from archive.ics.uci.edu
+### Dataset
+The dataset SMS Spam Collection Dataset comes from [UC Irvine ML Repository](https://archive.ics.uci.edu/ml/datasets/sms+spam+collection)
 
 ### Learning Goals
 
