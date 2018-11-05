@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 
 \usepackage{graphicx}
+\usepackage[hidelinks, colorlinks = true, urlcolor = blue, citecolor = black, linkcolor = notescolor]{hyperref}
 
 %opening
 \title{Homework 1 - Malware Analysis}
@@ -13,11 +14,11 @@
 \section{Introduction}
 
 \section{Target function}
-I decided to focus on the malware detection problem, i.e. given an instance of an Android Package (APK) the algorithm has to decide whether the input is a malware or not. To be more precise the goal of the homework is to train a model and find a function
+I decided to focus on the malware detection problem, i.e. given an instance of an Android Package (APK) the algorithm has to decide whether the input is a malware or not. In an informal way we can say that the goal of the homework is to train a model and find a function
 $ f: APK \rightarrow \{good, malware\} $.
-The input is not actually an APK, but it has to be the feature vector of the application, as stated in the DREBIN paper.(inserisci nota). So, to be more precise the target function is:
+The input is not actually an APK, but it has to be the feature vector of the application, as stated in the DREBIN \cite{DREBIN} paper. So, to be more precise the target function is:
 $ f: \{0,1\}^n  \rightarrow \{good, malware\} $, where n is the number of all the labels (features).
-The malware detection problem is nowadays a feature provided by the most important Android apps stores, e.g. Google Play Store. However, sometimes it is necessary to download unofficial applications (that offer more functionalities than the original ones, for instance) and these APKs are released in forum threads or in online ad-hoc repositories; the common Android user has to know, with high accuracy, whether the app is harmful or not before running it on his device.
+The malware detection problem is nowadays a feature provided by the most important Android apps stores, e.g. Google Play Store. However, sometimes it is necessary to download unofficial applications (e.g. apps that offer more functionalities than the original ones, or simply because of the lack of official ones) and these APKs are released in forum threads or in online ad-hoc repositories; the common Android user has to know, with high accuracy, whether the app is harmful or not before running it on his device.
 
 \subsection{Learning goals}
 \subsubsection{Metrics}
@@ -28,20 +29,21 @@ Most people would probably prefer high recall rather than high precision in this
 \item an Android developer, after days of hard work, could be denied to publish his harmless application on store and , in general, could never see his app deployed to users.
 \item there have already been legal issues (court decisions and conspicuous fines) for Anti-virus companies that misclassified software products
 \end{itemize}
-\subsubsection{Not just one model}
-In many contexts it is hard to know whether the results obtained are good or not. In general it is better to compare two models, rather than consider a single model, and especially their metrics (accuracy, precision and so on).
-For this reason I decided to train two different models, a Naive Bayes Classifier, in particular a Bernoulli Classifier, and a Support Vector Machine (\textbf{SVM}) model. The first one is generally faster to train, but its simplicity does not always guarantees good results in terms of accuracy, recall or whatever we take as metric.
-In the final section of this report I will compare the two trained models on the basis of their results. 
+Moreover, it is important to note that not all malicious applications are really harmful for everyone: in fact, it could be the case the and Android malware aims to steal credit card informations and some user does not use any credit card at all; this implies that for that particular user, the application is not harmful at all. Another example could be an Android malware that tries to exploit a specific version of Android (e.g. 6: Marshmallow) and all the owners of devices that run newer and patched versions of the Android operating systems have no reason to worry about that.
+\subsubsection{Two models are better than one!}
+In many contexts, especially in Machine Learning problems, it is hard to know whether the results obtained are good or not. In general it is better to compare two models, rather than consider a single model and their metrics, such as accuracy, precision and so on.
+For this reason I decided to train two different models, a Naive Bayes Classifier, implemented as a Bernoulli Classifier, and a Support Vector Machine (\textbf{SVM}) model. The first one is generally faster to train, but its simplicity does not always guarantee good results in terms of accuracy, recall or whatever we take as metric.
+In the final section of this report I will compare the two trained models on the basis of their training and validation results. 
 
 \section{The dataset}
-The dataset used to train the model is DREBIN. Its authors used the well-known tools of the static analysis to extract features from the APK samples, both from the Manifest.xml and from the disassembled Java code. The dataset contains 123,453 harmless samples and 5,560 malware, and this unbalance has been a tricky problem to face during the training phase. Since the original dataset is provided as a collection of files (whose name is the SHA256 digest of the APK), each containing the features extracted, I had to make some preprocessing in order to train correctly the model. 
+The dataset used to train the model is the DREBIN dataset. Its authors used the well-known tools of the static analysis to extract features from the APK samples, both from the Android Manifest.xml file and from the disassembled Java code. The dataset contains 123,453 harmless samples and 5,560 malware, and this unbalance has been a tricky problem to face during the training phase. Since the original dataset is provided as a collection of files (whose name is the SHA256 digest of the APK), each containing the features extracted, I had to make some preprocessing in order to train correctly the model. 
 
 \subsection{Preprocessing}
-This is in summary what I did in the preprocessing phase: first of all I used the sha256-family.csv file to load into the main memory all the files classified as malware by at least two of VirusTotal Anti-Virus. Then, I iterated over all the files of the dataset and for each of these I build up a feature vector; I trained and evaluated the two models, computing the confusion matrix and I finally plotted the results, ready to be analyzed and compared. I am now going to expose in detail the process described above. 
+This is in summary what I did in the preprocessing phase: first of all I used the sha256-family.csv file to load into the main memory all the files classified as malware by at least two of VirusTotal Anti-Virus \cite{DREBIN}. Then, I iterated over all the files of the dataset and for each of these I built up a feature vector; I trained and evaluated the two models, computing the confusion matrix and I finally plotted the results, ready to be analyzed and compared. I am now going to expose in detail the process described above. 
 
 \subsubsection{Tools used}
-I used Python 3.7 programming language, because of its well-documented modules and libraries: I did not want to reinvent the wheel, so I used the well-known ScikitLearn, Numpy, MatPlotLib libraries to build, train, and evaluate the classifier. In the next sections I will give further details on the precise methods used.
-I provided the source-code as a Jupyter Notebook (extension .ipynb) because it is easy both to read and to write snippets of code in this way. Moreover its checkpoints help to save intermediate results and show debug infos and images in the notebook itself.
+I used Python 3.7 programming language, because of its well-documented modules and libraries: I did not want to reinvent the wheel, so I used the well-known Scikit-Learn, Numpy, Matplotlib libraries to build, train, and evaluate the classifier. In the next sections I will give further details on the precise methods used.
+I provided the source-code as a Jupyter Notebook (extension .ipynb) because it is easy both to read and to write snippets of code in this way. Moreover its checkpoints help to save intermediate results and show debug infos and images in the notebook itself. It is possible to view the source-code \href{https://www.gitlab.com/lrusso96/machine-learning}{here} 
 
 \subsubsection{The unbalance problem}
 The original dataset is very unbalanced: there are 123,453 harmless samples and 5,560 malware; and this was a big problem to handle in the training phase: for instance, when I tried to train the SVM model at the beginning, in order to provide high accuracy it did not spot correctly the malwares samples, because of the excessive difference between the number of good samples with respect to the malware ones. The model, at the end, simply classified whatever it was passed in input as a good application, thus resulting in very high accuracy (about 97\%), but it was absolutely useless for the purpose of this homework. I finally decided to adopt a simple strategy, that helped me to overcome this issue: I \textit{forced} the dataset to be balanced, fixing the ratio $ \frac{\# malwares}{\# samples}$ at the beginning of the training phase. For the SVM model, I also set the \textbf{balanced} parameter to true: in this way, the model automatically adds new malware instances to the training dataset to have a well balanced dataset: but we cannot abuse of this functionality, because if the malware\_ratio is very low, e.g. 0.1, this option tends to overfit the model, thus producing good results in the training phase and very bad ones in the validation counterpart. For this reason the malware\_ratio has been fine-tuned and finally fixed to 0.4. because it provided very good results for both models.
@@ -50,7 +52,14 @@ The original dataset is very unbalanced: there are 123,453 harmless samples and 
 The DREBIN dataset provides the list of all malwares in a distinct file called sha256\_family.csv, that also gives further details about the malware family.  I decided to load all malwares into main memory, and saving them in an hash-set (a Python set), because this data structure guarantees a constant lookup time. It was very easy, in the later phases, to check for the "harm" of a sample, simply looking to this hash-set. 
 
 \subsubsection{Load labels}
-Once I had all malwares sha256 digests saved in an hash-set, I could focus on the features of each sample to take in consideration: the original dataset has an enormous number of features, divided and organized in 8 major sets: I decided to focus only on four of these sets, api\_calls (restricted API calls, whose access requires permission), requested\_hardware\_componenets (GPS, camera, etc.), urls (network addresses embedded in the code) and activities. It is important to note that a different choice of these sets leads to different results (in some cases, completely different). The trade off here was to choose enough and proper sets to allow the model to correctly train, and doing it possibly fast. Adding other sets (or even all) does not guarantee better results, and can be very time and resource consuming. 
+\begin{figure}[!ht]
+	\centering % optional
+	\includegraphics[width=0.8\textwidth]{features.png} % adjust width
+	\caption{DREBIN dataset features, in green the sets used in this homework.} 
+	\label{fig:features}
+\end{figure}
+Once I had all malwares sha256 digests saved in an hash-set, I could focus on the features of each sample to take in consideration: the original dataset has an enormous number of features, divided and organized in 8 major sets: I decided to focus only on four of these sets, api\_calls (restricted API calls, whose access requires permission), requested\_hardware\_componenets (GPS, camera, etc.), urls (network addresses embedded in the code) and activities. It is important to note that a different choice of these sets leads to different results (in some cases, completely different). The trade off here was to choose enough and proper sets to allow the model to correctly train, and doing it possibly fast. Adding other sets (or even all) does not guarantee better results, and can be very time and resource consuming.
+
 At the end of this phase, I had 32642 different labels and I saved them in an hash-map (a Python dictionary): in this case it is crucial to define a stable order between the labels: every label is mapped to a number $i \in \{0, 32641\}$.
 In the next section it will be clear how this is only the first phase of the one hot encoding process of the labels.
 
@@ -70,15 +79,24 @@ As for the SVM model, the matrix was built in a similar way but the values were 
 At this point I was able to pass the dataset to the SVM and Bernoulli Sklearn models. After the models were fitted, I used the cross\_val\_score and cross\_val\_predict methods of Sklearn to compute, in a cross validation with k = 5 folds the accuracy of the models and, later on, the confusion matrix. The results are presented in the next section.
 
 \section{The results}
-All these results have been computed with the cross validation process. 
+\subsection{Metrics}
+All these results have been computed with the cross validation process. In particular the dataset was divided into 5 folds and during the evaluation process the model was fit and trained with 4 of these 5 sets, and then evaluated on the remaining one: and this process was repeated 5 times. At the end, the accuracy, the recall and the precision were computed as the average of the above metrics obtained after each phase of evaluation. Also the confusion matrices were built during the cross validation process: chosen 4 folds, it was computed the confusion matrix on the remaining one: then, after 5 rounds, the weighted average of confusion matrices was computed, both for SVM and Bernoulli models.
+\begin{figure}[!ht]
+	\centering % optional
+	\includegraphics[width=0.8\textwidth]{metrics.png} % adjust width
+	\caption{} 
+	\label{fig:metrics}
+\end{figure}
+
 \subsubsection{Bernoulli}
 This model had an acuracy of 0.83, a recall of 0.81, and a precision of 0.77.
 
 \subsubsection{SVM}
 This model had an acuracy 0.80, a recall of 0.63, and a precision of 0.84.
 
+\subsection{Confusion matrices}
 The confusion matrices, built during the cross validation process, have been plotted with MatplotLib and are shown below:
-\begin{figure}
+\begin{figure}[!ht]
 	\centering
 	\begin{minipage}{.5\textwidth}
 		\centering
@@ -95,5 +113,15 @@ The confusion matrices, built during the cross validation process, have been plo
 \end{figure}
 
 \section{Conclusions}
-Since the goal was train a model with with high precision, we could pick the SVM model as the better of the two, since it is evident that 84 > 80. But, 0.8 precision is still a high value. If we look at the recall, we can note that Bernoulli performs way better than SVM 76 vs 63. Moreover, Bernoulli has been much faster to train on my machine. For these reasons I think that Bernoulli model, in this case, is the better. 
+Since the goal was train a model with with high precision, we could pick the SVM model as the better of the two, since it is evident that $84 > 77$. But, 0.77 precision is still a high value. If we look at the recall, we can note that Bernoulli performs way better than SVM: 0.81 compared to 0.63 of SVM model. Moreover, Bernoulli has been much faster to train on my machine. For these two reasons I think that Bernoulli model, in this case, due to its simplicity and its godd results, is the better. 
+
+% put after conclusion
+\begin{thebibliography}{10}
+	
+	% bibitem for paper
+	\bibitem{DREBIN}
+	D. Arp, M. Spreitzenbarth, M. H¨ubner, H. Gascon, K. Rieck, \textsl{DREBIN: Effective and Explainable Detection of Android Malware in Your Pocket}.
+		
+\end{thebibliography}
+
 \end{document}
