@@ -34,7 +34,7 @@ Most people would probably prefer high recall rather than high precision in this
 Moreover, it is important to note that not all malicious applications are really harmful for everyone: in fact, it could be the case the and Android malware aims to steal credit card informations and some user does not use any credit card at all; this implies that for that particular user, the application is not harmful at all. Another example could be an Android malware that tries to exploit a specific version of Android (e.g. 6: Marshmallow) and all the owners of devices that run newer and patched versions of the Android operating systems have no reason to worry about that.
 \subsubsection{Two models are better than one!}
 \label{sec:models}
-In many contexts, especially in Machine Learning problems, it is hard to know whether the results obtained are good or not. In general it is better to compare two models, rather than consider a single model and its metrics, such as accuracy, precision and so on.
+In many contexts, especially in Machine Learning problems, it is hard to know whether the results obtained are good or not. In general it is better to compare \cite{Main Book} two models, rather than consider a single model and its metrics, such as accuracy, precision and so on.
 For this reason I decided to train two different models, a Naive Bayes Classifier, implemented as a Bernoulli Classifier, and a Support Vector Machine (\textbf{SVM}) model. The first one is generally faster to train, but its simplicity does not always guarantee good results in terms of accuracy, recall or whatever we take as metric.
 In the final section of this report (\ref{sec:results}) I will compare the two trained models on the basis of their training and validation results. 
 
@@ -93,6 +93,17 @@ All these results have been computed with the cross validation process. In parti
 	\caption{} 
 	\label{fig:metrics}
 \end{figure}
+Remembering that:
+$
+\newline\newline
+\mbox{Accuracy}:= \frac{|\mbox{true positives}| + |\mbox{true negatives}|}{|\mbox{instances}|}
+\newline\newline
+\mbox{Recall}:= \frac{|\mbox{true positives}|}{|\mbox{real positives}|}
+\newline\newline
+\mbox{Precision}:= \frac{|\mbox{true positives}|}{|\mbox{predicted positives}|}
+\newline\newline
+$
+I am going to show the results obtained for the two models: they are plotted in figure \ref{fig:metrics}.
 
 \subsubsection{Bernoulli}
 This model had an acuracy of 0.83, a recall of 0.81, and a precision of 0.77.
@@ -101,7 +112,7 @@ This model had an acuracy of 0.83, a recall of 0.81, and a precision of 0.77.
 This model had an acuracy 0.80, a recall of 0.63, and a precision of 0.84.
 
 \subsection{Confusion matrices}
-The confusion matrices, built during the cross validation process, have been plotted with MatplotLib and are shown below. They were normalized in order to simplify the comparison between different models.
+The confusion matrices, built during the cross validation process, have been plotted with MatplotLib and are shown below (figures \ref{fig:cnf_m_bernoulli} and \ref{fig:cnf_m_svm}). They were normalized in order to simplify the comparison between different models. It's evident that they are quite similar, except for the false negatives values: there are much more true malwares misclassified in SVM rather than in Bernoulli, and this implies lower recall. 
 \begin{figure}[!ht]
 	\centering
 	\begin{minipage}{.5\textwidth}
@@ -124,9 +135,15 @@ Since the goal was train a model with with high precision, we could pick the SVM
 % put after conclusion
 \begin{thebibliography}{10}
 	
+	% bibitem for book
+	\bibitem{Main Book}
+	Tom M. Mitchell \textsl{Machine Learning}.
+	
 	% bibitem for paper
 	\bibitem{DREBIN}
 	D. Arp, M. Spreitzenbarth, M. H¨ubner, H. Gascon, K. Rieck, \textsl{DREBIN: Effective and Explainable Detection of Android Malware in Your Pocket}.
+	
+
 		
 \end{thebibliography}
 
