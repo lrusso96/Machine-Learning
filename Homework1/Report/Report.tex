@@ -4,13 +4,16 @@
 \usepackage[hidelinks, colorlinks = true, urlcolor = blue, citecolor = black]{hyperref}
 
 %opening
-\title{Homework 1 - Malware Analysis}
+\title{Homework 1 - Malware Analysis\\
+	\large Machine Learning 2018-19 - Sapienza}
 \author{Luigi Russo 1699981}
 
 \begin{document}
 	
 \maketitle
-	
+\newpage
+\tableofcontents
+\newpage
 \section{Introduction}
 This is my report for the Machine Learning Homework about the malware analysis. First of all I will point out which have been the goals of this homework, starting of course from defining the target function (view section \ref{sec:target_function}) that I've chosen to focus on. After defining the kinds of algorithms that I have implemented for the training phase (view section \ref{sec:models}), I will describe the dataset (view section \ref{sec:dataset}) and I will talk about all the issues related to it (view section \ref{sec:unbalance}), giving an overview of the process that I followed in order to achieve the goals. After that, I will finally present the results of the evaluation phase (view section \ref{sec:results}).
 
@@ -132,7 +135,7 @@ The confusion matrices, built during the cross validation process, have been plo
 \section{Conclusions}
 Since the goal was train a model with with high precision, we could pick the SVM model as the better of the two, since it is evident that $0.84 > 0.77$. But, 0.77 precision is still a high value. If we look at the recall, we can note that Bernoulli performs way better than SVM: 0.81 compared to 0.63 of SVM model. Moreover, Bernoulli has been much faster to train on my machine: the first one required just some minutes to fit, evaluate and complete its training, while the latter required half an hour to do the same. For these two reasons I would prefer the Bernoulli model, in this case, due to its simplicity and its good results. 
 
-% put after conclusion
+\newpage
 \begin{thebibliography}{10}
 	
 	% bibitem for book
@@ -143,8 +146,6 @@ Since the goal was train a model with with high precision, we could pick the SVM
 	\bibitem{DREBIN}
 	D. Arp, M. Spreitzenbarth, M. H¨ubner, H. Gascon, K. Rieck, \textsl{DREBIN: Effective and Explainable Detection of Android Malware in Your Pocket}.
 	
-
-		
 \end{thebibliography}
 
 \end{document}
