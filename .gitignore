@@ -1,0 +1,12 @@
+
+Homework2/code/images/*
+Homework2/code/test_images/*
+Homework2/code/pretrained/*
+*.pyc
+Homework2/code/classes
+Homework2/code/features
+Homework2/code/labels
+Homework2/code/tsne_features.npz
+Homework2/code/test_features
+Homework2/code/test_labels
+Homework2/code/backup.py
