@@ -10,3 +10,8 @@ Homework2/code/tsne_features.npz
 Homework2/code/test_features
 Homework2/code/test_labels
 Homework2/code/backup.py
+*.aux
+*.log
+*.out
+*.gz
+*.toc
