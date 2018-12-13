@@ -15,17 +15,17 @@
 \tableofcontents
 \newpage
 \section{Introduction}
-This is my report for the second homework of Machine Learning course, about the Venice Boat Classification. First of all I will point out which have been the goals of this homework, starting of course from defining the specific classification problem (view section \ref{sec:image_classification_problem}) that I have chosen to focus on. After defining the kinds of algorithms that I have implemented and used, I will describe the dataset (view section \ref{sec:dataset}). After that, I will finally present the results of the evaluation phase (view section \ref{sec:results}).
+This is my report for the second homework of Machine Learning course, about the Venice Boat Classification. First of all I will point out which have been the goals of this homework, starting of course from defining the specific classification problem (view section \ref{sec:image_classification_problem}) that I have chosen to focus on. After defining the kinds of algorithms that I have implemented and used, I will describe the dataset (view section \ref{sec:dataset}) and how I have handled the preprocessing phase (view section \ref{sec:preprocessing}). I will finally present the results of the evaluation phase (view section \ref{sec:results}).
 
 \subsection{Learning goals}
 \subsubsection{Classification problem}
 \label{sec:image_classification_problem}
-I have decided to focus on the problem of classifying \textbf{18} different classes of Venice boats. Given an instance of image, I want to be able to compute which is the correct type of boat of the input image. I have decided to use a pretrained model (Inception v3) in order to extract the features of each image: at this point, the feature vector is passed to some classifiers, such as SVM classifier. The model is then tested, computing at the end the accuracy and plotting the confusion matrix.
+I have decided to focus on the problem of classifying \textbf{18} different classes of Venice boats. Given an instance of image, I want to be able to compute which is the correct type of boat of the input image. I have decided to use a pretrained model (Inception v3) in order to extract the features of each image: at this point, the feature vector is passed to some classifiers, such as SVM classifier. The model can be finally tested, computing the accuracy and it is possible to plot the confusion matrix.
 \subsubsection{Metrics}
 The main goal of this homework is to correctly classify the highest number of input images, for this reason I will take into account both accuracy and precision metrics.
 \subsubsection{Many models}
 \label{sec:models}
-As in the first homework, also in this one I will give great importance to the comparison between different models. Once the pretrained graph extracts the features vector of the input image, it is passed to some classifier that actually runs the last step of the classification. I have decided to compare 6 different classifiers:
+As in the first homework, also in this one I will give great importance to the comparison between different models. Once the pretrained graph extracts the features vector of the input image, it is passed to some classifier that actually runs the last step of the classification. I have decided to compare these 6 different classifiers:
 \begin{itemize}
 	\item Support Vector Machine (\textbf{SVM})
 	\item Extra Trees (\textbf{ET})
@@ -40,15 +40,16 @@ I have used Python 3.6 programming language, because of its well-documented modu
 I have provided the source-code as a collection of Python files (extension .py). It is possible to view the source-code in the attached zipped file (it is also present \href{https://www.gitlab.com/lrusso96/machine-learning}{in this GitLab repository}).
 
 \section{The pretrained model}
-I have decided to use Inception v3 model. In particular I have used the checkpoint of 12/05/2015, saving it in the 'pretrained' folder. This file (extension .pb) cannot be directly used, but it has to be imported, when initializing the TensorFlow session.
+Since I have decided to use a pretrained model to extract features, I have downloaded and reused a checkpoint of the Inception v3 model. In particular I have used the checkpoint of 12/05/2015, saving it in the 'pretrained' folder. This file (extension .pb) cannot be directly used, but it has to be imported, when initializing the TensorFlow session: this is possible thanks to some TensorFlow functions: \textit{ParseFromString} and \textit{import\_graph\_def}; the first one simply transforms a binary file into a complex graph object, instead the second one actually makes the graph available to the current TensorFlow session.
 
 \section{The dataset}
 \label{sec:dataset}
-Both training and test images are taken from the Sapienza MarDCT dataset, a wide collection of Venice boat images. The dataset is already divided into training and test images: however, some preprocessing was needed in order to handle the different structure of the two sets of images and also because there were some multi-labeled images in the test set.
+Both training and test images are taken from the Sapienza MarDCT dataset, a wide collection of Venice boat images. The dataset is already divided into training and test images: however, some preprocessing was needed in order to handle the different structure of the two sets of images and also because there were some multi-labeled images in the test set: in particular, the training set was organized in 24 folders, each containing a specific class of images; the name of each folder is the name of the class, i.e. the boat type. The test set is provided as a wide collection of images; thanks to the file ground\_truth.txt it is possible to associate each file to a specific label; however, as already said, some images contain fragments of boats (these images are labeled as partial) or two or more boats of different types (multiple label). I have decided to simply skip these test images.
 
 \subsection{Preprocessing}
+\label{sec:preprocessing}
 % summary of the preprocessing phase preprocessing.py
-First of all I have decided to limit the number of classes to 18 (out of the total 24), because of the number of sample images of some classes: in some cases less than 10 images. This led me to the following list of classes:
+First of all I have decided to limit the number of classes to 18 (out of the total 24), excluding all classes with less than 10 images. Figure \ref{fig:labels} lists both all the classes that I have included in the training phase and the number of training images for each label.
 
 \begin{figure}[!ht]
 	\centering % optional
@@ -57,29 +58,27 @@ First of all I have decided to limit the number of classes to 18 (out of the tot
 	\label{fig:labels}
 \end{figure}
 
-As for the test set, it provided a ground truth text file, containing the list of all the images and their label: in some cases, however, this label was not present, or it was simply an invalid label (not present in the training set) such as multiple, partial, etc. I had to handle these issues, filtering the images with correct labels!
-
 \subsubsection{Extract features}
-Once the pretrained graph was taken into main memory from disk, they have been fed to a TensorFlow implementation of Inception v3 with the classification layer removed in order to produce a set of labeled feature vectors.
+Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3 with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. 
 
 \section{Classification}
 % summary of classifier.py
 \subsubsection{t-sne features}
-Dimensionality reduction is carried out on the 2048-D features using t-distributed stochastic neighbor embedding (\textbf{t-SNE}) to transform them into a 2-D feature which is easy to visualize. The t-SNE is used as an informative step: if the same color (i.e. label) points are mostly clustered together there is a high chance that we could use the features to train a classifier with high accuracy.
+I have carried out dimensionality reduction on the 2048-D feature vector using t-distributed stochastic neighbor embedding (\textbf{t-SNE}) to transform the input features into a 2-D feature which is easy to visualize. The t-SNE is used as an informative step: if the same color (i.e. label) points are mostly clustered together there is a high chance that we could use the features to train a classifier with high accuracy. Figure \ref{fig:tsne} shows the result of this phase.
 
 \begin{figure}[!ht]
 	\centering % optional
-	\includegraphics[width=0.7\textwidth]{../code/output/features.png} % adjust width
-	\caption{\textit{t-SNE features}} % optional
-	\label{fig:2dh}
+	\includegraphics[width=1\textwidth]{../code/output/features.png} % adjust width
+	\caption{\textit{t-SNE features extracted from Inception v3.}} % optional
+	\label{fig:tsne}
 \end{figure}
 
 \subsection{Running the classifiers}
-For every model (see models listed above) I have run the proper classifier: in most cases I simply used the default configuration.
+For every model (for the complete list see \ref{sec:models}) I have run the proper classifier. In most cases I have simply used the default configuration, and the complete list of parameters passed to each classifier can be seen in the file main.py.
 
 \section{The results}
 \label{sec:results}
-For each model I have also plotted the confusion matrix (not normalized!). They are shown in the following images.
+For each model I have computed the accuracy and the precision, and I have finally plotted the confusion (and not normalized) matrix. They are shown in the following images.
 \subsection{Metrics}
 \begin{figure}[!ht]
 	\centering % optional
@@ -151,7 +150,7 @@ The accuracy was 79.7\% and the precision was 81.8\%
 \end{figure}
 
 \section{Conclusions}
-The model with highest accuracy and precision is the Gaussian Binomial.
+Figure \ref{fig:metrics} shows that both Gaussian Binomial and SVM reach very good results in accuracy and precision, with values higher than 0.86. The other models reach levels of accuracy and precision under the 0.8 threshold.
 
 \newpage
 \begin{thebibliography}{10}
