@@ -29,6 +29,7 @@ def init_features(graph_file, images_dir, features_file, labels_file, classes_fi
         pickle.dump(labels, open(labels_file, 'wb'))
         pickle.dump(classes, open(classes_file, 'wb'))    
         print('CNN features obtained and saved.')
+    print("Number of training images:", len(labels))
     return features, labels, classes
 
 def init_test_features(graph_file, images_dir, features_file, labels_file, classes):
@@ -55,4 +56,5 @@ def init_test_features(graph_file, images_dir, features_file, labels_file, class
         pickle.dump(features, open(features_file, 'wb'))
         pickle.dump(labels, open(labels_file, 'wb'))
         print('CNN features obtained and saved.')
+    print("Number of test images:", len(labels))
     return features, labels

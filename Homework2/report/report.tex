@@ -53,20 +53,23 @@ Since I have decided to use a pretrained model to extract features, I have downl
 \label{sec:dataset}
 Both training and test images are taken from the Sapienza MarDCT dataset, a wide database of images and videos containing data coming from multiple video sources (fixed, zooming, and Pan-Tilt-Zoom cameras) and from different scenarios: in particular I have used the images of 24 different categories of boats navigating in the italian city of Venice and extracted by the ARGOS system. This dataset is already divided into training and test images: however, some preprocessing was needed in order to handle the different structure of the two sets of images and also because there were some multi-labeled images in the test set: in particular, the training set was organized in 24 folders, each containing a specific class of images; the name of each folder is the name of the class, i.e. the boat type; the class "water" actually contains a set of false positives images. The test set is provided, instead, as a unique (no folders!) collection of images; thanks to the file \textit{ground\_truth.txt}, however, it is possible to associate each file to a specific label. As already said, some images contain fragments of boats (these images are labeled as \textit{partial}) or two or more boats of different types (multiple label). I have decided to simply skip these test images.
 
+\subsection{Preprocessing}
+\label{sec:preprocessing}
+
+% summary of the preprocessing phase preprocessing.py
+First of all I have decided to limit the number of classes to 18 (out of the total 24), excluding all classes with less than 10 images. Figure \ref{fig:labels} lists all the classes that I have included in the training phase. At the end of the preprocessing phase the number the dataset was:
+\begin{itemize}
+	\item \textbf{3810}\footnote{cfr. figure \ref{fig:labels} to see the number of images per label} training images
+	\item \textbf{1252}\footnote{the number of test images is actually is 1969, but as stated in section \ref{sec:dataset} I have filtered the images with partial or multiple labels and the false positives (i.e. \textit{water} label)} test images
+\end{itemize}
+
+\subsubsection{Extract features}
 \begin{figure}[!ht]
 	\centering % optional
 	\includegraphics[width=0.5\textwidth]{labels.png} % adjust width
 	\caption{\textit{Boat classes from dataset MarDCT}} % optional
 	\label{fig:labels}
 \end{figure}
-
-\subsection{Preprocessing}
-\label{sec:preprocessing}
-
-% summary of the preprocessing phase preprocessing.py
-First of all I have decided to limit the number of classes to 18 (out of the total 24), excluding all classes with less than 10 images. Figure \ref{fig:labels} lists all the classes that I have included in the training phase together with the number of training images for each label.
-
-\subsubsection{Extract features}
 Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors.
 
 \section{Classification}
