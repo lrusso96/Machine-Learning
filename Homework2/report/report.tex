@@ -21,7 +21,7 @@ This is my report for the second homework of Machine Learning course, about the 
 \subsubsection{Classification problem}
 \label{sec:image_classification_problem}
 I have decided to focus on the problem of classifying \textbf{18} different classes of Venice boats. Given an instance of image, I want to be able to compute which is the correct type of boat of the input image. I have decided to use a pretrained model (Inception v3) in order to extract the features of each image: at this point, the feature vector is passed to some classifiers, such as SVM classifier. The model can be finally tested, computing the accuracy and it is possible to plot the confusion matrix.
-\subsubsection{Metrics}
+\paragraph*{Metrics}
 The main goal of this homework is to correctly classify the highest number of input images, for this reason I will take into account both accuracy and precision metrics.
 \subsubsection{Many models}
 \label{sec:models}
@@ -36,7 +36,7 @@ As in the first homework, also in this one I will give great importance to the c
 \end{itemize}
 
 \section{Tools used}
-I have used Python 3.6 programming language, because of its well-documented modules and libraries: I did not want to reinvent the wheel, so I have used the well-known \textit{Scikit-Learn}, \textit{Numpy}, \textit{Matplotlib} libraries to build, train, and evaluate the classifier. In the next sections I will give further details on the precise methods used.
+I have used TensorFlow (Python 3.6), because of its simplicity and its performance. I did not want to reinvent the wheel, so I have used the well-known \textit{Scikit-Learn}, \textit{Numpy}, \textit{Matplotlib} libraries to preprocess the dataset and evaluate the classifiers. In the next sections I will give further details on the precise methods used.
 I have provided the source-code as a collection of Python files (extension .py). It is possible to view the source-code in the attached zipped file (it is also present \href{https://www.gitlab.com/lrusso96/machine-learning}{in this GitLab repository}).
 
 \section{The pretrained model}
@@ -57,29 +57,28 @@ Both training and test images are taken from the Sapienza MarDCT dataset, a wide
 \label{sec:preprocessing}
 
 % summary of the preprocessing phase preprocessing.py
-First of all I have decided to limit the number of classes to 18 (out of the total 24), excluding all classes with less than 10 images. Figure \ref{fig:labels} lists all the classes that I have included in the training phase. At the end of the preprocessing phase the number the dataset was:
+First of all I have decided to limit the number of classes to 18 (out of the total 24), excluding all classes with less than 10 images. Figure \ref{fig:labels} lists all the classes that I have included in the training phase. At the end of the preprocessing phase the dataset was made up by:
 \begin{itemize}
 	\item \textbf{3810}\footnote{cfr. figure \ref{fig:labels} to see the number of images per label} training images
-	\item \textbf{1252}\footnote{the number of test images is actually is 1969, but as stated in section \ref{sec:dataset} I have filtered the images with partial or multiple labels and the false positives (i.e. \textit{water} label)} test images
+	\item \textbf{1252}\footnote{the number of test images is actually 1969, but as stated in section \ref{sec:dataset} I have filtered the images with partial or multiple labels and the false positives (i.e. \textit{water} label)} test images
 \end{itemize}
 
 \subsubsection{Extract features}
-\begin{figure}[!ht]
+Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors.
+\begin{figure}[!hb]
 	\centering % optional
 	\includegraphics[width=0.5\textwidth]{labels.png} % adjust width
 	\caption{\textit{Boat classes from dataset MarDCT}} % optional
 	\label{fig:labels}
 \end{figure}
-Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors.
-
 \section{Classification}
 % summary of classifier.py
 \subsubsection{t-sne features}
 I have carried out dimensionality reduction on the 2048-D feature vector using t-distributed stochastic neighbor embedding (\textbf{t-SNE}) to transform the input features into a 2-D feature which is easy to visualize. The t-SNE is used as an informative step: if the same color (i.e. label) points are mostly clustered together there is a high chance that we could use the features to train a classifier with high accuracy. Figure \ref{fig:tsne} shows the result of this phase.
 
-\begin{figure}[!ht]
+\begin{figure}[!hb]
 	\centering % optional
-	\includegraphics[width=1\textwidth]{../code/output/features.png} % adjust width
+	\includegraphics[width=0.9\textwidth]{../code/output/features.png} % adjust width
 	\caption{\textit{t-SNE features extracted from Inception v3.}} % optional
 	\label{fig:tsne}
 \end{figure}
@@ -89,7 +88,7 @@ For each model (for the complete list see \ref{sec:models}) I have run the prope
 
 \section{The results}
 \label{sec:results}
-I have computed the accuracy and the precision for each classifier, and I have finally plotted the confusion (and not normalized) matrices. They are shown in the following images. All the following results have been computed with the cross validation process. The accuracy and the precision have been computed as the average of the above metrics obtained after each phase of evaluation. Also the confusion matrices have been built during the cross validation process: it was computed weighted average of the confusion matrices for each fold. Remembering that:
+I have computed the accuracy and the precision for each classifier, and I have finally plotted the confusion (and not normalized) matrices. They are shown in the following images. All the following results have been computed with the cross validation process. The accuracy and the precision have been computed as the average of the above metrics obtained after each phase of evaluation. Also the confusion matrices have been built during the cross validation process: the weighted average of the confusion matrices was computed for each fold. Remembering that:
 $
 \newline\newline
 \mbox{Accuracy}:= \frac{|\mbox{true positives}| + |\mbox{true negatives}|}{|\mbox{instances}|}
@@ -97,14 +96,17 @@ $
 \mbox{Precision}:= \frac{|\mbox{true positives}|}{|\mbox{predicted positives}|}
 \newline\newline
 $
-I am going to show the results obtained for all the models: they are also plotted in figure \ref{fig:metrics}.
-\subsection{Metrics}
-\begin{figure}[!ht]
+
+\begin{figure}[!htb]
 	\centering % optional
 	\includegraphics[width=0.8\textwidth]{metrics.png} % adjust width
 	\caption{\textit{Precision and accuracy of the classifiers}} % optional
 	\label{fig:metrics}
 \end{figure}
+
+I am going to show the results obtained for all the models: they are also plotted in figure \ref{fig:metrics}.
+\subsection{Metrics}
+
 \subsubsection{SVM}
 The accuracy was 86.6\% and the precision was 86.7\%
 \subsubsection{KNN}
