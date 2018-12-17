@@ -43,9 +43,9 @@ I have provided the source-code as a collection of Python files (extension .py).
 Since I have decided to use a pretrained model to extract features, I have downloaded and reused a checkpoint of the Inception v3 model \cite{Inception}. Inception-v3 is trained for the ImageNet Large Visual Recognition Challenge using the data from 2012, and has a 78.0\% top-1 accuracy and a 93.9\% top-5 accuracy over the 1000 classes of Imagenet. In particular I have used the checkpoint of 12/05/2015, saving it in the 'pretrained' folder. This file (extension .pb) cannot be directly used, but it has to be imported, when initializing the TensorFlow session: this is possible thanks to some TensorFlow functions: \textit{ParseFromString} and \textit{import\_graph\_def}; the first one simply transforms a binary file into a complex graph object, instead the second one actually makes the graph available to the current TensorFlow session.
 
 \begin{figure}[!ht]
-	\centering % optional
-	\includegraphics[width=0.8\textwidth]{inceptionv3.png} % adjust width
-	\caption{\textit{Inception v3 architecture}} % optional
+	\centering 
+	\includegraphics[width=0.8\textwidth]{inceptionv3.png} 
+	\caption{\textit{Inception v3 architecture}} 
 	\label{fig:inceptionv3}
 \end{figure}
 
@@ -66,9 +66,9 @@ First of all I have decided to limit the number of classes to 18 (out of the tot
 \subsubsection{Extract features}
 Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors. Once extracted, both the training and test features have been saved with pickle. In this way it has been possible to tune the classifiers, without repeating the feature extraction process, quite demanding in terms of resources and time.
 \begin{figure}[!hb]
-	\centering % optional
-	\includegraphics[width=0.5\textwidth]{labels.png} % adjust width
-	\caption{\textit{Boat classes from dataset MarDCT}} % optional
+	\centering 
+	\includegraphics[width=0.5\textwidth]{labels.png} 
+	\caption{\textit{Boat classes from dataset MarDCT}} 
 	\label{fig:labels}
 \end{figure}
 \section{Classification}
@@ -77,15 +77,15 @@ Once the pretrained graph was taken into main memory from disk, the images have 
 I have carried out dimensionality reduction on the 2048-D feature vector using t-distributed stochastic neighbor embedding (\textbf{t-SNE}) to transform the input features into a 2-D feature which is easy to visualize. The t-SNE is used as an informative step: if the same color (i.e. label) points are mostly clustered together there is a high chance that we could use the features to train a classifier with high accuracy. Figure \ref{fig:tsne} shows the result of this phase.
 
 \begin{figure}[!hb]
-	\centering % optional
-	\includegraphics[width=0.9\textwidth]{../code/output/features.png} % adjust width
-	\caption{\textit{t-SNE features extracted from Inception v3.}} % optional
+	\centering 
+	\includegraphics[width=0.9\textwidth]{../code/output/features.png} 
+	\caption{\textit{t-SNE features extracted from Inception v3.}}
 	\label{fig:tsne}
 \end{figure}
 
 \subsection{Running the classifiers}
-As already stated in previous sections, the features of booth training and test sets have been saved to disk: in this way running different classifiers does not require to load and extract features each time; moreover it has been possible to tune each classifier in a second moment.
-For each model (for the complete list see \ref{sec:models}) I have run the proper scikit-learn classifier. In most cases I have simply used the default configuration, but in some cases I have changed some parameter for tuning. For instance, as for SVM model, I have decided to use the LinearSVC classifier, that is similar to SVC with parameter kernel='linear', but implemented in terms of liblinear rather than libsvm, so it has more flexibility in the choice of penalties and loss functions and should scale better to large numbers of samples. I have also set the max\_iter parameter to 3000 (the default value is 1000) to improve by 0.1 both the accuracy and precision (see section \ref{sec:results}).
+As already stated in previous sections, the features of both training and test sets have been saved to disk: in this way running different classifiers does not require to load and extract features each time; moreover it has been possible to tune each classifier in a second moment.
+For each model (for the complete list see \ref{sec:models}) I have run the proper Scikit-learn classifier. In most cases I have simply used the default configuration, but in some cases I have changed some parameter for tuning. For instance, as for SVM model, I have decided to use the LinearSVC classifier, that is similar to SVC with parameter kernel='linear', but implemented in terms of liblinear rather than libsvm, so it has more flexibility in the choice of penalties and loss functions and should scale better to large numbers of samples. I have also set the \textit{max\_iter} parameter to 3000 (the default value is 1000) to improve by 0.1 both the accuracy and precision (see section \ref{sec:results}).
 For a complete list of parameters passed to each classifier see the file \textit{main.py}.
 
 \section{The results}
@@ -102,9 +102,9 @@ $
 I am going to show the results obtained for all the models: they are also plotted in figure \ref{fig:metrics}.
 
 \begin{figure}[!htb]
-	\centering % optional
-	\includegraphics[width=0.8\textwidth]{metrics.png} % adjust width
-	\caption{\textit{Precision and accuracy of the classifiers}} % optional
+	\centering 
+	\includegraphics[width=1\textwidth]{metrics.png} 
+	\caption{\textit{Precision and accuracy of the classifiers}} 
 	\label{fig:metrics}
 \end{figure}
 
@@ -127,13 +127,13 @@ The accuracy was 79.7\% and the precision was 81.8\%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-SVM.png}
-		\caption{SVM confusion matrix} % optional
+		\caption{SVM confusion matrix} 
 		\label{fig:cnf_svm}
 	\end{minipage}%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-KNN.png}
-		\caption{KNN confusion matrix} % optional
+		\caption{KNN confusion matrix} 
 		\label{fig:cnf_knn}
 	\end{minipage}
 \end{figure}
@@ -143,13 +143,13 @@ The accuracy was 79.7\% and the precision was 81.8\%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-RF.png}
-		\caption{RF confusion matrix} % optional
+		\caption{RF confusion matrix} 
 		\label{fig:cnf_rf}
 	\end{minipage}%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-ET.png}
-		\caption{ET confusion matrix} % optional
+		\caption{ET confusion matrix} 
 		\label{fig:cnf_et}
 	\end{minipage}
 \end{figure}
@@ -159,13 +159,13 @@ The accuracy was 79.7\% and the precision was 81.8\%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-MLP.png}
-		\caption{ML confusion matrix} % optional
+		\caption{ML confusion matrix} 
 		\label{fig:cnf_mlp}
 	\end{minipage}%
 	\begin{minipage}{.5\textwidth}
 		\centering
 		\includegraphics[width=.9\linewidth]{../code/output/CNN-GNB.png}
-		\caption{GNB confusion matrix} % optional
+		\caption{GNB confusion matrix} 
 		\label{fig:cnf_gnb}
 	\end{minipage}
 \end{figure}
