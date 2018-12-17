@@ -55,9 +55,8 @@ y_train, y_test = labels, test_labels
 
 # classify the images with a Linear Support Vector Machine (SVM)
 print('Support Vector Machine starting ...')
-clf = LinearSVC()
+clf = LinearSVC(max_iter = 3000)
 run_classifier(clf, X_train, y_train, X_test, y_test, "CNN-SVM", classes, output_dir)
-
 
 # RandomForestClassifier/ExtraTreesClassifier defaults:
 # (n_estimators=10, criterion='gini’, max_depth=None, min_samples_split=2, min_samples_leaf=1,
@@ -85,7 +84,6 @@ run_classifier(clf, X_train, y_train, X_test, y_test, "CNN-RF", classes, output_
 print('K-Nearest Neighbours Classifier starting ...')
 clf = KNeighborsClassifier(n_neighbors=1, n_jobs=4)
 run_classifier(clf, X_train, y_train, X_test, y_test, "CNN-KNN", classes, output_dir)
-
 
 # MPLClassifier defaults:
 # hidden_layer_sizes=(100, ), activation=’relu’, solver=’adam’, alpha=0.0001, batch_size=’auto’,

@@ -64,7 +64,7 @@ First of all I have decided to limit the number of classes to 18 (out of the tot
 \end{itemize}
 
 \subsubsection{Extract features}
-Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors.
+Once the pretrained graph was taken into main memory from disk, the images have been fed to a TensorFlow implementation of Inception v3, downloaded from the official repository, with the classification layer removed in order to produce a set of labeled feature vectors of 2048 floats: this \textit{next-to-last} layer is a tensor called 'pool\_3:0'. Inception is, indeed, a complex model (see figure \ref{fig:inceptionv3}) made up by a lot of submodules: namely the Inception modules. Each module implements a set of primitives (e.g. filtering, max pooling, etc.), so what I have done is simply remove the last layer of the network and collect the feature vectors. Once extracted, both the training and test features have been saved with pickle. In this way it has been possible to tune the classifiers, without repeating the feature extraction process, quite demanding in terms of resources and time.
 \begin{figure}[!hb]
 	\centering % optional
 	\includegraphics[width=0.5\textwidth]{labels.png} % adjust width
@@ -84,11 +84,13 @@ I have carried out dimensionality reduction on the 2048-D feature vector using t
 \end{figure}
 
 \subsection{Running the classifiers}
-For each model (for the complete list see \ref{sec:models}) I have run the proper classifier. In most cases I have simply used the default configuration, however for a complete list of parameters passed to each classifier see the file \textit{main.py}.
+As already stated in previous sections, the features of booth training and test sets have been saved to disk: in this way running different classifiers does not require to load and extract features each time; moreover it has been possible to tune each classifier in a second moment.
+For each model (for the complete list see \ref{sec:models}) I have run the proper scikit-learn classifier. In most cases I have simply used the default configuration, but in some cases I have changed some parameter for tuning. For instance, as for SVM model, I have decided to use the LinearSVC classifier, that is similar to SVC with parameter kernel='linear', but implemented in terms of liblinear rather than libsvm, so it has more flexibility in the choice of penalties and loss functions and should scale better to large numbers of samples. I have also set the max\_iter parameter to 3000 (the default value is 1000) to improve by 0.1 both the accuracy and precision (see section \ref{sec:results}).
+For a complete list of parameters passed to each classifier see the file \textit{main.py}.
 
 \section{The results}
 \label{sec:results}
-I have computed the accuracy and the precision for each classifier, and I have finally plotted the confusion (and not normalized) matrices. They are shown in the following images. All the following results have been computed with the cross validation process. The accuracy and the precision have been computed as the average of the above metrics obtained after each phase of evaluation. Also the confusion matrices have been built during the cross validation process: the weighted average of the confusion matrices was computed for each fold. Remembering that:
+I have computed the accuracy and the precision for each classifier, and I have finally plotted the confusion (and not normalized) matrices. They are shown in the following images. All the following results have been computed on the test set, meaning that the model was first trained on the training images and at the end both the accuracy and the precision have been computed on the test images. Remembering that:
 $
 \newline\newline
 \mbox{Accuracy}:= \frac{|\mbox{true positives}| + |\mbox{true negatives}|}{|\mbox{instances}|}
@@ -97,6 +99,8 @@ $
 \newline\newline
 $
 
+I am going to show the results obtained for all the models: they are also plotted in figure \ref{fig:metrics}.
+
 \begin{figure}[!htb]
 	\centering % optional
 	\includegraphics[width=0.8\textwidth]{metrics.png} % adjust width
@@ -104,9 +108,7 @@ $
 	\label{fig:metrics}
 \end{figure}
 
-I am going to show the results obtained for all the models: they are also plotted in figure \ref{fig:metrics}.
 \subsection{Metrics}
-
 \subsubsection{SVM}
 The accuracy was 86.6\% and the precision was 86.7\%
 \subsubsection{KNN}
@@ -171,8 +173,7 @@ The accuracy was 79.7\% and the precision was 81.8\%
 \end{figure}
 
 \section{Conclusions}
-Figure \ref{fig:metrics} shows that Multi-Layer Perceptron (MLP) and Support Vector Machine (SVM) classifiers reach very good results in both accuracy and precision, with values higher than 0.86. The other classifiers, instead, reach levels of accuracy and precision under the 0.8 threshold.
-
+Figure \ref{fig:metrics} shows that Multi-Layer Perceptron (\textbf{MLP}) and Support Vector Machine (\textbf{SVM}) classifiers reach very good results in both accuracy and precision, with values higher than 0.86. The other classifiers, instead, reach levels of accuracy and precision under the 0.8 threshold. Generally speaking, every model is able to correctly classify the classes with lots of sample (e.g Vaporetto and Mototopo):  and this fact strongly depends on the features extraction process, as can be seen in figure \ref{fig:tsne}, where it is evident that some classes, such as Alilaguna, Gondola and Vaporetto, are clearly divided into clusters. So the major differences between the classifiers depend on the way they classify samples of classes with very low training images (e.g Sandaloaremi).
 \newpage
 \begin{thebibliography}{10}
 	
