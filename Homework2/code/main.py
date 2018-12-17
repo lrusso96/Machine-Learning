@@ -26,12 +26,13 @@ images_dir = 'images/'
 test_images_dir = 'test_images/'
 output_dir = "output/"
 graph_file = 'pretrained/graph.pb'
-features_file = "features"
-labels_file = "labels"
-classes_file = "classes"
-test_features_file = "test_features"
-test_labels_file = "test_labels"
-tsne_file = 'tsne_features.npz'
+intermediate_dir = 'intermediate/'
+features_file = intermediate_dir + "features"
+labels_file = intermediate_dir+ "labels"
+classes_file = intermediate_dir+ "classes"
+test_features_file = intermediate_dir + "test_features"
+test_labels_file = intermediate_dir + "test_labels"
+tsne_file = intermediate_dir + 'tsne_features.npz'
 
 #___ MAIN __#
 
