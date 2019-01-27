@@ -1,6 +1,6 @@
 # Venice Boat Classification
 
-**Note:** This README provides a simple overview of the homework. The report is available [here](Homework2/report).
+**Note:** This README provides a simple overview of the homework. The report is available [here](report).
 
 ### Overview 
 The images are fed to a TensorFlow implementation of Inception v3 with the classification layer removed in order to produce a set of labelled feature vectors.
@@ -41,13 +41,13 @@ The following packages are required:
 The output images are stored in the 'output' folder
 
 #### t-SNE
-![t-SNE plot](Homework2/code/output/features.png)
+![t-SNE plot](code/output/features.png)
 
 #### Multi-Layer Perceptron
-![MLP plot](Homework2/code/output/CNN-MLP.png)
+![MLP plot](code/output/CNN-MLP.png)
 
 #### Support Vector Machine
-![SVM plot](Homework2/code/output/CNN-SVM.png)
+![SVM plot](code/output/CNN-SVM.png)
 
 #### K-Nearest Neighbor
-![SVM plot](Homework2/code/output/CNN-KNN.png)
+![SVM plot](code/output/CNN-KNN.png)
