@@ -1,6 +1,6 @@
 # Malware Detection with Naive Bayes Classifier
 
-**Note:** This README provides a simple overview of the homework. The report is available [here](Homework1/report).
+**Note:** This README provides a simple overview of the homework. The report is available [here](report).
 
 ### Overview
 Learn a traget function f: APK -> {good, malware} in order to identify malicious Android applications, starting from the feature vector. 
@@ -16,7 +16,7 @@ The dataset contains
 For now, the code is provided as a Jupyter Notebook.
 
 ### Bernoulli
-![Bernoulli confusion matrix](Homework1/report/cnf_m_bernoulli.png)
+![Bernoulli confusion matrix](report/cnf_m_bernoulli.png)
 
 ### Support Vector Machine
-![SVM confusion matrix](Homework1/report/cnf_m_svm.png)
+![SVM confusion matrix](report/cnf_m_svm.png)
